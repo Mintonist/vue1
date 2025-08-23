@@ -1,25 +1,35 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import Task1_TodoList from './components/Task1_TodoList.vue'
+import Task2_ShoppingCart from './components/Task2_ShoppingCart.vue'
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="55" height="55" />
 
     <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+      <p>Курс Vue от ResultSchool</p>
     </div>
   </header>
 
   <main>
-    <TheWelcome />
+    <Task1_TodoList />
+    <Task2_ShoppingCart />
   </main>
 </template>
 
 <style scoped>
 header {
   line-height: 1.5;
+  align-self: center;
+  margin: 1rem 1rem;
+  font-size: 2rem;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  place-items: flex-start;
 }
 
 .logo {
