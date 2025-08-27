@@ -4,13 +4,14 @@
 @tailwind utilities;
 
 body {
-  font-family: system-ui, sans-serif;
-  background-color: #d7d8da;
-  color: black;
+   font-family: system-ui, sans-serif;
+   background-color: #d7d8da;
+   color: black;
 }
 
 #app {
-  background-color: #f1f5f8;
-  display: flex;
-  flex-direction: column;
+   background-color: #f1f5f8;
+   display: flex;
+   place-items: start;
+   flex-direction: column;
 }

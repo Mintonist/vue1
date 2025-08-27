@@ -2,7 +2,8 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function getRandomFloat(min, max) { // for gen coordinates
+function getRandomFloat(min, max) {
+  // for gen coordinates
   return (Math.random() * (max - min) + min).toFixed(6);
 }
 
@@ -17,9 +18,4 @@ function declOfNumText(number, arr, insertValue = false) {
   return res;
 }
 
-export {
-  getRandomInt,
-	getRandomFloat,
-  declOfNumText,
-  delay
-};
+export { getRandomInt, getRandomFloat, declOfNumText, delay };
