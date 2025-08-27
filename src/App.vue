@@ -6,8 +6,8 @@ import Task3_Likes from './task3/Task3_Likes.vue';
 
 let arr = reactive([
    { id: 1, name: 'TodoList', component: Task1_TodoList, show: false },
-   { id: 2, name: 'ShoppingCart', component: Task2_ShoppingCart, show: false },
-   { id: 3, name: 'Likes', component: Task3_Likes, show: true },
+   { id: 2, name: 'ShoppingCart', component: Task2_ShoppingCart, show: true },
+   { id: 3, name: 'Likes', component: Task3_Likes, show: false },
 ]);
 </script>
 
