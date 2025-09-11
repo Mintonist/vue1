@@ -3,6 +3,7 @@ defineProps({
    review: { type: Object, required: true },
    index: { type: Number, required: true },
 });
+defineEmits(['remove-review', 'toggle-like']);
 </script>
 
 <template>

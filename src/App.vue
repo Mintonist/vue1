@@ -3,11 +3,13 @@ import { reactive } from 'vue';
 import Task1_TodoList from './task1/Task1_TodoList.vue';
 import Task2_ShoppingCart from './task2/Task2_ShoppingCart.vue';
 import Task3_Likes from './task3/Task3_Likes.vue';
+import Task4_Forms from './task4/Task4_Forms.vue';
 
 let arr = reactive([
    { id: 1, name: 'TodoList', component: Task1_TodoList, show: false },
-   { id: 2, name: 'ShoppingCart', component: Task2_ShoppingCart, show: true },
+   { id: 2, name: 'ShoppingCart', component: Task2_ShoppingCart, show: false },
    { id: 3, name: 'Likes', component: Task3_Likes, show: false },
+   { id: 4, name: 'Forms', component: Task4_Forms, show: true },
 ]);
 </script>
 
