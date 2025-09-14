@@ -1,35 +1,168 @@
 <script setup>
 import { declOfNumText } from '@/helpers';
-import { computed, reactive, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useFetch } from './composbles/useFetch';
 
-const todos = ref([
-   { id: 1, text: 'Задача 1', completed: false },
-   { id: 2, text: 'Задача 2', completed: false },
-   { id: 3, text: 'Задача 3', completed: false },
-   { id: 4, text: 'Задача 4', completed: false },
-]);
+const todos = ref([]);
+const { error, isLoading, fetchData } = useFetch();
+
+const fetchTodos = async () => {
+   const data = await fetchData('http://localhost:3000/todos');
+
+   if (!error.value) {
+      //todos.value = [];
+      todos.value.push(...data);
+   }
+};
+
+const removeTodo = async (id) => {
+   await fetchData('http://localhost:3000/todos/' + id, { method: 'DELETE' });
+   if (!error.value) todos.value = todos.value.filter((item) => item.id != id);
+};
+
+const addTodo = async () => {
+   const newTodo = { id: Date.now().toString(), text: newItem.value, completed: false };
+   await fetchData('http://localhost:3000/todos/', { method: 'POST', body: newTodo });
+   console.log('error', error.value);
+   if (!error.value) {
+      console.log('newTodo', newTodo);
+      todos.value.push(newTodo);
+      newItem.value = '';
+   }
+};
+
+const completeTodo = async (id) => {
+   const modifyTodo = { completed: true };
+   await fetchData('http://localhost:3000/todos/' + id, { method: 'PATCH', body: modifyTodo });
+   if (!error.value)
+      todos.value.forEach(async (item) => {
+         if (item.id == id) {
+            item.completed = true;
+         }
+      });
+};
+
+const fetchTodos2 = async () => {
+   error.value = '';
+   isLoading.value = true;
+   try {
+      const response = await fetch('http://localhost:3000/todos/');
+      if (!response.ok) {
+         error.value = await response.json();
+         return;
+      }
+      const data = await response.json();
+      todos.value.push(...data);
+   } catch (err) {
+      error.value = err.message;
+   } finally {
+      isLoading.value = false;
+   }
+};
+
+const removeTodo2 = async (id) => {
+   error.value = '';
+   isLoading.value = true;
+   try {
+      const response = await fetch('http://localhost:3000/todos/' + id, { method: 'DELETE' });
+      if (!response.ok) {
+         error.value = await response.json();
+         return;
+      }
+
+      todos.value = todos.value.filter((item) => item.id != id);
+   } catch (err) {
+      error.value = err.message;
+   } finally {
+      isLoading.value = false;
+   }
+};
+
+const addTodo2 = async () => {
+   error.value = '';
+   isLoading.value = true;
+   const newTodo = { id: Date.now().toString(), text: newItem.value, completed: false };
+   try {
+      const response = await fetch('http://localhost:3000/todos/', { method: 'POST', body: JSON.stringify(newTodo) });
+      if (!response.ok) {
+         error.value = await response.json();
+         return;
+      }
+
+      todos.value.push(newTodo);
+      newItem.value = '';
+   } catch (err) {
+      error.value = err.message;
+   } finally {
+      isLoading.value = false;
+   }
+};
+
+const completeTodo2 = async (id) => {
+   error.value = '';
+   isLoading.value = true;
+   const modifyTodo = { completed: true };
+   try {
+      const response = await fetch('http://localhost:3000/todos/' + id, {
+         method: 'PATCH',
+         body: JSON.stringify(modifyTodo),
+      });
+      if (!response.ok) {
+         error.value = await response.json();
+         return;
+      }
+
+      todos.value.forEach(async (item) => {
+         if (item.id == id) {
+            item.completed = true;
+         }
+      });
+   } catch (err) {
+      error.value = err.message;
+   } finally {
+      isLoading.value = false;
+   }
+};
+
+onMounted(() => {
+   fetchTodos();
+});
 
 const newItem = ref('');
 
-function addTodo(data) {
-   console.log('addTodo', data);
+// function addTodo(data) {
+//    console.log('addTodo', data);
 
-   if (newItem.value?.length > 0) {
-      todos.value.push({ id: Date.now(), text: newItem.value, completed: false });
-      newItem.value = '';
-   }
-}
+//    if (newItem.value?.length > 0) {
+//       todos.value.push({ id: Date.now(), text: newItem.value, completed: false });
+//       newItem.value = '';
+//    }
+// }
 
-function removeTodo(id) {
-   todos.value = todos.value.filter((item) => item.id != id);
-}
+// function removeTodo(id) {
+//    todos.value = todos.value.filter((item) => item.id != id);
+// }
+
+// async function removeComleted() {
+//    todos.value.forEach(async (item) => {
+//       if (item.completed) {
+//          await removeTodo(item.id);
+//       }
+//    });
+// }
 
 function removeComleted() {
-   todos.value = todos.value.filter((item) => !item.completed);
+   todos.value.forEach((item) => {
+      if (item.completed) {
+         removeTodo(item.id);
+      }
+   });
 }
 
 function removeAll() {
-   todos.value = [];
+   todos.value.forEach((item) => {
+      removeTodo(item.id);
+   });
 }
 
 const uncompletedAmount = computed(() => {
@@ -48,7 +181,7 @@ const uncompletedAmount = computed(() => {
          </div>
       </form>
 
-      <div class="todo-app__main">
+      <div v-if="!isLoading" class="todo-app__main">
          <ul v-if="todos.length > 0" class="todo-list">
             <li
                v-for="todo in todos"
@@ -58,11 +191,7 @@ const uncompletedAmount = computed(() => {
             >
                <span class="todo-list__item-text">{{ todo.text }}</span>
                <button
-                  @click="
-                     () => {
-                        todo.completed = true;
-                     }
-                  "
+                  @click="completeTodo(todo.id)"
                   class="btn btn--check"
                   aria-label="Завершить"
                   :disabled="todo.completed"
@@ -86,6 +215,9 @@ const uncompletedAmount = computed(() => {
             <p>Список задач пуст</p>
          </div>
       </div>
+      <div v-else>
+         <p>Идёт загрузка...</p>
+      </div>
 
       <div class="todo-app__footer">
          <p class="todo-app__footer-text">
@@ -93,6 +225,10 @@ const uncompletedAmount = computed(() => {
          </p>
          <button @click="removeComleted" class="btn btn--clear">Удалить завершенные</button>
          <button @click="removeAll" class="btn btn--clear">Очистить список</button>
+      </div>
+
+      <div v-if="error" class="error">
+         <p>Ошибка {{ error }}</p>
       </div>
    </div>
 </template>

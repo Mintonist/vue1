@@ -6,6 +6,10 @@
 .title {
    text-align: center;
 }
+.error {
+   margin-top: 10px;
+   color: #e3342f;
+}
 
 .todo-app__main {
    background-color: #fff;
