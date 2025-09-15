@@ -1,17 +1,74 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { Form, Field, ErrorMessage } from 'vee-validate';
-
-import { cities } from './constants.js';
+import { db } from '../firebase.js';
+//import { cities } from './constants.js';
 import validationSchema from './validationSchema.js';
+import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
+
+const submitSuccess = ref(false);
+const isLoading = ref(false);
+const error = ref('');
+const cities = ref([]);
+
+const fetchCities = async () => {
+   try {
+      isLoading.value = true;
+      const col = collection(db, 'cities');
+      console.log(col);
+      if (!col) {
+         error.value = 'Проблема загрузки списка городов';
+         return;
+      }
+
+      const snapshot = await getDocs(col);
+      cities.value = snapshot.docs.map((doc) => doc.data());
+   } catch (err) {
+      error.value = err.message;
+   } finally {
+      isLoading.value = false;
+   }
+};
+
+onMounted(() => {
+   fetchCities();
+});
 
 const showPass1 = ref(false);
 const showPass2 = ref(false);
-const submitSuccess = ref(false);
 
-const onFormSubmit = (values) => {
-   submitSuccess.value = true;
+const onFormSubmit = async (values) => {
    console.log('onFormSubmit', values);
+   submitSuccess.value = false;
+   error.value = '';
+   isLoading.value = true;
+
+   const { city, comments, country, email, firstname, lastname, password, phone } = values;
+   const newUser = { city, comments, country, email, firstname, lastname, password, phone, id: Date.now().toString() };
+
+   // проверяем, что email уникальный
+   try {
+      const col = collection(db, 'users');
+      const snapshot = await getDocs(col);
+      const existingUser = snapshot.docs.find((doc) => doc.data().email === newUser.email);
+
+      console.log('existingUser', existingUser);
+
+      if (existingUser) {
+         error.value = 'Пользователь с таким e-mail уже существует';
+         return;
+      }
+
+      // добавляем нового user в Firestore
+      const userRef = doc(db, 'users', newUser.id);
+
+      await setDoc(userRef, newUser);
+      submitSuccess.value = true;
+   } catch (err) {
+      error.value = err.message;
+   } finally {
+      isLoading.value = false;
+   }
 };
 </script>
 
@@ -21,23 +78,23 @@ const onFormSubmit = (values) => {
       <Form :validation-schema="validationSchema" class="registration-form" autocomplete="off" @submit="onFormSubmit">
          <div class="form-group">
             <label class="form-label" for="firstname">Имя *</label>
-            <Field class="form-control" name="firstname" type="text" id="firstname" />
+            <Field class="form-control" name="firstname" type="text" id="firstname" value="Иван" />
             <ErrorMessage name="firstname" />
          </div>
          <div class="form-group">
             <label class="form-label" for="lastname">Фамилия *</label>
-            <Field class="form-control" name="lastname" type="text" id="lastname" />
+            <Field class="form-control" name="lastname" type="text" id="lastname" value="Иванов" />
             <ErrorMessage name="lastname" />
          </div>
          <div class="form-group">
             <label class="form-label" for="country">Страна/Регион *</label>
-            <Field class="form-control" name="country" type="text" id="country" required />
+            <Field class="form-control" name="country" type="text" id="country" required value="Китай" />
             <ErrorMessage name="country" />
          </div>
          <div class="form-group">
             <label class="form-label" for="city">Город *</label>
             <div class="custom-select">
-               <Field as="select" class="form-control" id="city" name="city" required>
+               <Field as="select" class="form-control" id="city" name="city" required value="spb">
                   <option value="" disabled selected>Выберите город</option>
                   <option v-for="(item, index) in cities" :value="item.value" :key="index">
                      {{ item.text }}
@@ -48,12 +105,12 @@ const onFormSubmit = (values) => {
          </div>
          <div class="form-group">
             <label class="form-label" for="phone">Телефон *</label>
-            <Field class="form-control" type="tel" name="phone" id="phone" required />
+            <Field class="form-control" type="tel" name="phone" id="phone" required value="1234567890" />
             <ErrorMessage name="phone" />
          </div>
          <div class="form-group">
             <label class="form-label" for="email">Email *</label>
-            <Field class="form-control" type="email" name="email" id="email" required />
+            <Field class="form-control" type="email" name="email" id="email" required value="test@test.test" />
             <ErrorMessage name="email" />
          </div>
          <div class="form-group form-group--password">
@@ -64,6 +121,7 @@ const onFormSubmit = (values) => {
                name="password"
                id="password"
                required
+               value="123"
             />
             <ErrorMessage name="password" />
             <button class="btn-icon btn-icon--password" type="button" @click="showPass1 = !showPass1">
@@ -83,6 +141,7 @@ const onFormSubmit = (values) => {
                name="confirm-password"
                id="confirm-password"
                required
+               value="123"
             />
             <ErrorMessage name="confirm-password" />
             <button class="btn-icon btn-icon--password" type="button" @click="showPass2 = !showPass2">
@@ -96,7 +155,7 @@ const onFormSubmit = (values) => {
          </div>
          <div class="form-group form-group--full-width">
             <label class="form-label" for="comments">Дополнительная информация</label>
-            <Field as="textarea" class="form-control" id="comments" name="comments"></Field>
+            <Field as="textarea" class="form-control" id="comments" name="comments" value="справка"></Field>
          </div>
          <div class="form-group form-group--full-width">
             <label class="form-label form-label--checkbox" for="terms">
@@ -109,7 +168,11 @@ const onFormSubmit = (values) => {
          <button class="btn" type="reset">Очистить форму</button>
       </Form>
       <div v-if="submitSuccess" class="message message--success">Регистрация прошла успешно!</div>
+      <div v-if="error" class="message message--error">
+         <p>Ошибка {{ error }}</p>
+      </div>
    </div>
+   <div v-if="isLoading" class="loading-overlay"><p>Загрузка ...</p></div>
 </template>
 
 <style scoped src="./task4.css" />
