@@ -6,4 +6,9 @@
    </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.not-found {
+   text-align: center;
+   padding: 20px 0;
+}
+</style>
