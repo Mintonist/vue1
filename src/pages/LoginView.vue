@@ -25,13 +25,6 @@ const onUserLogin = () => {
 .btn-login {
    display: inline-block;
    background-color: #007bff;
-   color: white;
-   border: none;
-   padding: 10px 20px;
-   font-size: 16px;
-   border-radius: 6px;
-   cursor: pointer;
-   text-decoration: none;
 }
 
 .btn-login:hover {

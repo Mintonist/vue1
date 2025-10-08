@@ -1,40 +1,42 @@
 import { getCurrentTasks, setCurrentTasks } from '@/localstorage.service';
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { computed, ref } from 'vue';
+import { computed, reactive } from 'vue';
 
 export const useTasksStore = defineStore('tasks', () => {
-   const tasks = ref(getCurrentTasks());
+   const tasks = reactive(getCurrentTasks());
 
-   const getTotalTasks = computed(() => tasks.value.length);
+   const getTotalTasks = computed(() => tasks.length);
 
    const addTask = (data) => {
       console.log('addTask', data);
-      tasks.value.push(data);
+
+      tasks.push({ ...data, id: Date.now().toString() });
       saveToLocalStorage();
    };
 
    const removeTask = (id) => {
       console.log('removeTask', id);
-      const index = tasks.value.find((data) => data.id === id);
+      const index = tasks.findIndex((data) => data.id === id);
       console.log('index', index);
-      if (index) {
-         tasks.value.splice(index, 1);
+      if (index >= 0) {
+         tasks.splice(index, 1);
          saveToLocalStorage();
       }
    };
 
    const updateTask = (id, data) => {
       console.log('updateTask', id, data);
-      const index = tasks.value.find((data) => data.id === id);
-      if (index) {
-         tasks.value[index] = { ...tasks.value[index], data };
+      const index = tasks.findIndex((data) => data.id === id);
+      console.log('index', index);
+      if (index >= 0) {
+         tasks[index] = { ...tasks[index], ...data };
          saveToLocalStorage();
       }
    };
 
    const saveToLocalStorage = () => {
-      console.log('saveToLocalStorage', tasks.value);
-      setCurrentTasks(tasks.value);
+      console.log('saveToLocalStorage', tasks);
+      setCurrentTasks(tasks);
    };
 
    return { tasks, getTotalTasks, addTask, removeTask, updateTask };

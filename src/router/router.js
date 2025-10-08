@@ -50,7 +50,7 @@ const router = createRouter({
    linkExactActiveClass: 'router-link--active',
 });
 
-router.beforeEach(async (to, from) => {
+router.beforeEach(async (to) => {
    const canAccess =
       to.meta.requiresAuth == undefined || to.meta.requiresAuth == false || (to.meta.requiresAuth && isLoggesIn.value);
    console.log(

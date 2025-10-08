@@ -1,6 +1,7 @@
 <script setup>
+import TaskForm from '@/components/TaskForm.vue';
 import { useTasksStore } from '@/stores/tasks';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const props = defineProps({ id: { type: String, required: true } });
@@ -8,11 +9,18 @@ const props = defineProps({ id: { type: String, required: true } });
 const router = useRouter();
 const taskStore = useTasksStore();
 
-const { updateTask, removeTask } = taskStore;
+const { removeTask, updateTask } = taskStore;
 
 const isEditing = ref(false);
 
 const route = useRoute();
+
+const taskInfo = computed(() => taskStore.tasks.find((data) => data.id == props.id));
+
+if (!taskInfo.value) {
+   router.replace('/404');
+}
+
 watch(
    () => route.params.id,
    (newId, oldId) => {
@@ -20,8 +28,13 @@ watch(
    },
 );
 
-const onPressEdit = () => {
+const onSwitchEdit = () => {
    isEditing.value = !isEditing.value;
+};
+
+const onSubmit = (data) => {
+   updateTask(props.id, data);
+   onSwitchEdit();
 };
 
 const onPressDelete = () => {
@@ -31,12 +44,15 @@ const onPressDelete = () => {
 </script>
 
 <template>
-   <div>
-      <h1>Задача {{ id }}</h1>
-      <p>Детали задачи #{{ id }}</p>
-      <button @click="onPressEdit" class="btn btn--edit">Редактировать</button>
-      &nbsp;
-      <button @click="onPressDelete" class="btn btn--delete">Удалить</button>
+   <div v-if="taskInfo">
+      <div v-if="!isEditing">
+         <h1>{{ taskInfo?.title }}</h1>
+         <p>{{ taskInfo?.description }}</p>
+         <button @click="onSwitchEdit" class="btn btn--edit">Редактировать</button>
+         &nbsp;
+         <button @click="onPressDelete" class="btn btn--delete">Удалить</button>
+      </div>
+      <TaskForm v-else :info="taskInfo" @reset="onSwitchEdit" @submit="onSubmit" />
    </div>
 </template>
 
@@ -50,13 +66,6 @@ const onPressDelete = () => {
    border: 1px solid #ccc;
    border-radius: 4px;
    resize: none;
-}
-
-.btn {
-   padding: 8px 12px;
-   border: none;
-   border-radius: 4px;
-   cursor: pointer;
 }
 
 .btn--edit {

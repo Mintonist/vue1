@@ -124,4 +124,14 @@ body {
 .fade-leave-to {
    opacity: 0;
 }
+
+.btn {
+   padding: 8px 12px;
+   margin-right: 8px;
+   border: none;
+   border-radius: 4px;
+   cursor: pointer;
+   color: white;
+   text-decoration: none;
+}
 </style>

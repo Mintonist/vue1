@@ -1,8 +1,9 @@
 <script setup>
 import { useTasksStore } from '@/stores/tasks';
+import { storeToRefs } from 'pinia';
 
 const taskStore = useTasksStore();
-const { getTotalTasks } = taskStore;
+const { tasks, getTotalTasks } = storeToRefs(taskStore);
 </script>
 
 <template>
@@ -10,7 +11,7 @@ const { getTotalTasks } = taskStore;
       <h1 v-if="getTotalTasks > 0">Список задач ({{ getTotalTasks }})</h1>
       <h1 v-else>Нет задач для отображения</h1>
       <ul class="task-list">
-         <li v-for="info in taskStore.tasks" :key="info.id" class="task-item">
+         <li v-for="info in tasks" :key="info.id" class="task-item">
             <RouterLink :to="'/tasks/' + info.id" class="task-link">{{ info.title }}</RouterLink>
          </li>
       </ul>
