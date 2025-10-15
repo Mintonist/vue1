@@ -1,1 +1,0 @@
-import{e as l,c as n,a as t,t as o,u as r,f as c,o as i}from"./index-BlsuJWQp.js";const m={__name:"TaskDetailsView",setup(u){const a=c();return l(()=>a.params.id,(e,s)=>{console.log("TaskDetailsView",e,s)}),(e,s)=>(i(),n("div",null,[t("h1",null,"Задача "+o(r(a).params.id),1),t("p",null,"Детали задачи #"+o(r(a).params.id),1)]))}};export{m as default};
