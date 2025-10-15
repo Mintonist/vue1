@@ -1,37 +1,23 @@
 <script setup>
-import { getCurrentBasket, setCurrentBasket } from '@/localstorage.service';
-import { computed, reactive } from 'vue';
 import BasketTable from './components/BasketTable.vue';
+import { useBasketStore } from './stores/basket';
+import { storeToRefs } from 'pinia';
 
-const basket = reactive(getCurrentBasket());
-
-function removeItem(id) {
-   const index = basket.findIndex((item) => item.id == id);
-   if (index >= 0) {
-      basket.splice(index, 1);
-      setCurrentBasket(basket);
-   }
-}
+const basketStore = useBasketStore();
+const { basket, totalBasketPrice: totalPrice } = storeToRefs(basketStore);
+const { removeBasketItem, updateBasketItem } = basketStore;
 
 function increaseItemQuantity(item) {
    ++item.quantity;
-   setCurrentBasket(basket);
+   updateBasketItem(item.id, item);
 }
 
 function decreaseItemQuantity(item) {
    if (item.quantity > 1) {
       --item.quantity;
-      setCurrentBasket(basket);
+      updateBasketItem(item.id, item);
    }
 }
-
-const totalPrice = computed(() => {
-   let total = 0;
-   basket.forEach((item) => {
-      total += item.price * item.quantity;
-   });
-   return total;
-});
 </script>
 
 <template>
@@ -40,7 +26,7 @@ const totalPrice = computed(() => {
          v-bind="{ totalPrice, basket }"
          @decrease-item-quantity="decreaseItemQuantity"
          @increase-item-quantity="increaseItemQuantity"
-         @remove-item="removeItem"
+         @remove-item="removeBasketItem"
       />
    </div>
 </template>

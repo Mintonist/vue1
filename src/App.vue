@@ -7,9 +7,9 @@ import Task4_Forms from './task4/Task4_Forms.vue';
 
 let arr = reactive([
    { id: 1, name: 'TodoList', component: Task1_TodoList, show: false },
-   { id: 2, name: 'ShoppingCart', component: Task2_ShoppingCart, show: false },
+   { id: 2, name: 'ShoppingCart', component: Task2_ShoppingCart, show: true },
    { id: 3, name: 'Likes', component: Task3_Likes, show: false },
-   { id: 4, name: 'Forms', component: Task4_Forms, show: true },
+   { id: 4, name: 'Forms', component: Task4_Forms, show: false },
 ]);
 </script>
 
