@@ -5,3 +5,6 @@ https://docs.fontawesome.com/web/use-with/vue
 
 https://tailwindcss.com/docs/installation/using-vite
 https://tailwindcss.com/docs/editor-setup
+
+API Яндекс погоды:
+https://yandex.ru/dev/weather/doc/ru/concepts/how-to

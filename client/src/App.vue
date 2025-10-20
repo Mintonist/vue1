@@ -1,5 +1,5 @@
 <script setup>
-import LayoutContainer from './components/LayoutContainer.vue';
+import LayoutFooter from './components/LayoutFooter.vue';
 import LayoutHeader from './components/LayoutHeader.vue';
 </script>
 
@@ -8,9 +8,12 @@ import LayoutHeader from './components/LayoutHeader.vue';
       <header class="bg-white fixed top-0 left-0 right-0">
          <LayoutHeader></LayoutHeader>
       </header>
-      <main class="flex-1 mt-26"><router-view /></main>
-
-      <footer><LayoutContainer>Подвал</LayoutContainer></footer>
+      <main class="flex-1 mt-26">
+         <router-view />
+      </main>
+      <footer>
+         <LayoutFooter></LayoutFooter>
+      </footer>
    </div>
 </template>
 
