@@ -1,12 +1,31 @@
 <script setup>
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faFloppyDisk } from '@fortawesome/free-regular-svg-icons';
+import ArticleList from '@/components/ArticleList.vue';
+import LayoutContainer from '@/components/layouts/LayoutContainer.vue';
+import PaginationBase from '@/components/base/PaginationBase.vue';
+import SearchBase from '@/components/base/SearchBase.vue';
+import { useArticlesStore } from '@/stores/articles';
+
+const articlesStore = useArticlesStore();
+
+const doSearch = (searchQuery) => {
+   articlesStore.fetchArticles({ search: searchQuery });
+};
+const doPaginate = (page) => {
+   articlesStore.fetchArticles({ page: page });
+};
 </script>
 
 <template>
-   <h1 class="bg-blue-200">You did it!</h1>
-   <p>Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the documentation</p>
-   <FontAwesomeIcon :icon="faFloppyDisk" />
+   <LayoutContainer>
+      <SearchBase :on-search="doSearch" />
+      <ArticleList />
+      <PaginationBase
+         v-if="articlesStore.totalPage > 1"
+         :current-page="articlesStore.currentPage"
+         :total-page="articlesStore.totalPage"
+         :on-pageChanged="doPaginate"
+      />
+   </LayoutContainer>
 </template>
 
 <style scoped></style>

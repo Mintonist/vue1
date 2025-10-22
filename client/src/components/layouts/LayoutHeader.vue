@@ -1,8 +1,22 @@
 <script setup>
 import LayoutContainer from './LayoutContainer.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faBackward, faCode, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faBackward, faCode, faUsers, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { faFile } from '@fortawesome/free-regular-svg-icons';
+import { useUserStore } from '@/stores/user';
+import { storeToRefs } from 'pinia';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const userStore = useUserStore();
+const { user, isAuth } = storeToRefs(userStore);
+
+const onLogout = () => {
+   userStore.logout();
+
+   router.push('/login');
+};
 </script>
 
 <template>
@@ -20,24 +34,33 @@ import { faFile } from '@fortawesome/free-regular-svg-icons';
             <p>Разбор ошибок</p>
          </div>
          <div>
-            <p class="mb-3">
+            <div class="mb-3">
                <RouterLink
+                  v-if="!isAuth"
                   to="/login"
                   aria-label="Вход"
                   class="bg-blue-500 px-4 py-2 text-white rounded-md hover:bg-blue-700"
-                  >Войти</RouterLink
                >
-            </p>
+                  Войти
+               </RouterLink>
+               <div v-else class="text-right">
+                  <span>{{ user.login }}</span>
+                  &nbsp;|&nbsp;
+                  <button @click="onLogout" class="cursor-pointer hover:text-blue-500">
+                     <FontAwesomeIcon :icon="faArrowRightFromBracket" />
+                  </button>
+               </div>
+            </div>
             <p>
                <a href="#" @click="$router.go(-1)" aria-label="Назад" class="hover:text-blue-400"
                   ><FontAwesomeIcon :icon="faBackward"
                /></a>
                &nbsp;&nbsp;
-               <RouterLink to="/posts" aria-label="Новая статья" class="hover:text-blue-400"
+               <RouterLink v-if="isAuth" to="/posts" aria-label="Новая статья" class="hover:text-blue-400"
                   ><FontAwesomeIcon :icon="faFile"
                /></RouterLink>
                &nbsp;&nbsp;
-               <RouterLink to="/users" aria-label="Пользователи" class="hover:text-blue-400"
+               <RouterLink v-if="isAuth" to="/users" aria-label="Пользователи" class="hover:text-blue-400"
                   ><FontAwesomeIcon :icon="faUsers"
                /></RouterLink>
             </p>

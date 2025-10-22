@@ -5,8 +5,16 @@ import vue from '@vitejs/plugin-vue';
 import vueDevTools from 'vite-plugin-vue-devtools';
 import tailwindcss from '@tailwindcss/vite';
 
+const serverUrl = 'http://localhost:3002';
+
 // https://vite.dev/config/
 export default defineConfig({
+   server: {
+      port: 5173,
+      proxy: {
+         '/api': { target: serverUrl, changeOrigin: true, rewrite: (path) => path },
+      },
+   },
    plugins: [vue(), vueDevTools(), tailwindcss()],
    resolve: {
       alias: {

@@ -13,7 +13,7 @@ app.use(express.static('../client/build'));
 app.use(cookieParser());
 app.use(express.json());
 
-app.use('/', routes);
+app.use('/api/', routes);
 
 mongoose.connect(process.env.DB_CONNECTION_STRING, { dbName: 'test-blog' }).then(() => {
    app.listen(port, () => {
