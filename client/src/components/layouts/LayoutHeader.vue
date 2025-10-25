@@ -10,7 +10,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 const userStore = useUserStore();
-const { user, isAuth } = storeToRefs(userStore);
+const { user, isAuth, isAdmin } = storeToRefs(userStore);
 
 const onLogout = () => {
    userStore.logout();
@@ -56,11 +56,11 @@ const onLogout = () => {
                   ><FontAwesomeIcon :icon="faBackward"
                /></a>
                &nbsp;&nbsp;
-               <RouterLink v-if="isAuth" to="/posts" aria-label="Новая статья" class="hover:text-blue-400"
+               <RouterLink v-if="isAuth && isAdmin" to="/posts" aria-label="Новая статья" class="hover:text-blue-400"
                   ><FontAwesomeIcon :icon="faFile"
                /></RouterLink>
                &nbsp;&nbsp;
-               <RouterLink v-if="isAuth" to="/users" aria-label="Пользователи" class="hover:text-blue-400"
+               <RouterLink v-if="isAuth && isAdmin" to="/users" aria-label="Пользователи" class="hover:text-blue-400"
                   ><FontAwesomeIcon :icon="faUsers"
                /></RouterLink>
             </p>

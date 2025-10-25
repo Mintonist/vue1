@@ -10,6 +10,7 @@ const labelClass = 'block text-gray-800';
 const errorClass = 'block text-red-800';
 
 const errorMessage = ref('');
+const paloMessage = ref('');
 const router = useRouter();
 
 const schema = yup.object({
@@ -32,6 +33,34 @@ const onSubmit = async (data) => {
       }
    } catch (e) {
       errorMessage.value = 'Ошибка: ' + e;
+   }
+};
+
+const onSubmitPalo = async (data, e) => {
+   paloMessage.value = '';
+   console.log('onSubmitPalo() data:', data, e.evt.submitter.value);
+   const needPost = e.evt.submitter.value == 'post';
+   try {
+      const response = await fetch(
+         data.url + '/server/info',
+         needPost
+            ? {
+                 method: 'POST',
+                 headers: { 'Content-Type': 'application/json' },
+              }
+            : {
+                 method: 'GET',
+              },
+      );
+      if (!response.ok) {
+         throw new Error('User response error: ' + response.status);
+      }
+
+      const res = await response.text();
+      console.log('onSubmitPalo() response:', res);
+      paloMessage.value = res;
+   } catch (e) {
+      paloMessage.value = 'Ошибка: ' + e;
    }
 };
 </script>
@@ -70,6 +99,36 @@ const onSubmit = async (data) => {
             <RouterLink to="/login" class="text-blue-500 hover:underline">Войти</RouterLink>
          </p>
          <MessageSpanBase v-if="errorMessage" type="error">{{ errorMessage }}</MessageSpanBase>
+      </Form>
+
+      <Form @submit="onSubmitPalo" class="bg-white rounded-md shadow-md w-full max-w-sm mx-auto p-6 mt-12">
+         <div class="mb-4">
+            <label for="url" :class="labelClass">Palo url</label>
+            <Field
+               type="text"
+               name="url"
+               id="url"
+               :class="inputClass"
+               placeholder="http://127.0.0.1:7777"
+               :required="true"
+            />
+            <ErrorMessage name="url" :class="errorClass" />
+         </div>
+         <button
+            type="submit"
+            value="get"
+            class="w-full cursor-pointer text-xl bg-blue-500 hover:bg-blue-700 rounded-md text-white p-4 mb-4"
+         >
+            Отправить GET запрос на PALO
+         </button>
+         <button
+            type="submit"
+            value="post"
+            class="w-full cursor-pointer text-xl bg-blue-500 hover:bg-blue-700 rounded-md text-white p-4 mb-4"
+         >
+            Отправить POST запрос на PALO
+         </button>
+         <MessageSpanBase v-if="paloMessage" type="error">{{ paloMessage }}</MessageSpanBase>
       </Form>
    </div>
 </template>

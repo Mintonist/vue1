@@ -6,7 +6,12 @@ const router = createRouter({
    history: createWebHistory(import.meta.env.BASE_URL),
    routes: [
       { path: '/', name: 'home', component: () => import('../views/HomeView.vue') },
-      { path: '/users', name: 'users', component: () => import('../views/UsersView.vue'), meta: { requreAuth: true } },
+      {
+         path: '/users',
+         name: 'users',
+         component: () => import('../views/UsersView.vue'),
+         meta: { requreAuth: true, requreAdmin: true },
+      },
       { path: '/login', name: 'login', component: () => import('../views/LoginView.vue') },
       {
          path: '/register',
@@ -30,10 +35,19 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
    const userStore = useUserStore();
-   const { isAuth } = storeToRefs(userStore);
+   const { isAuth, isAdmin } = storeToRefs(userStore);
+   console.log(to.meta, isAuth.value, isAdmin.value);
    if (to.meta.requreAuth) {
-      if (!isAuth) {
-         next();
+      if (isAuth.value) {
+         if (to.meta.requreAdmin) {
+            if (isAdmin.value) {
+               next();
+            } else {
+               next('/no_access');
+            }
+         } else {
+            next();
+         }
       } else {
          next('/login');
       }

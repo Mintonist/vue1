@@ -28,8 +28,12 @@ export const useArticlesStore = defineStore('articles', () => {
          const data = await response.json();
          console.log(data);
 
-         articles.value = data.data.posts;
-         totalPage.value = data.data.lastPage;
+         if (!data.error && data.data) {
+            articles.value = data.data.posts;
+            totalPage.value = data.data.lastPage;
+         }
+
+         return data;
       } catch (e) {
          console.log(e);
       }
