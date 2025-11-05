@@ -56,7 +56,7 @@ const onLogout = () => {
                   ><FontAwesomeIcon :icon="faBackward"
                /></a>
                &nbsp;&nbsp;
-               <RouterLink v-if="isAuth && isAdmin" to="/posts" aria-label="Новая статья" class="hover:text-blue-400"
+               <RouterLink v-if="isAuth && isAdmin" to="/post" aria-label="Новая статья" class="hover:text-blue-400"
                   ><FontAwesomeIcon :icon="faFile"
                /></RouterLink>
                &nbsp;&nbsp;

@@ -20,7 +20,7 @@ export const useArticlesStore = defineStore('articles', () => {
             currentPage.value = 1;
          }
 
-         const response = await fetch(`/api/posts?search=${searchQuery.value}&limit=3&page=${currentPage.value}`);
+         const response = await fetch(`/api/post?search=${searchQuery.value}&limit=9&page=${currentPage.value}`);
          if (!response.ok) {
             throw new Error('Articles response error: ' + response.status);
          }

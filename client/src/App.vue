@@ -1,4 +1,5 @@
 <script setup>
+import ModalBase from './components/base/ModalBase.vue';
 import LayoutFooter from './components/layouts/LayoutFooter.vue';
 import LayoutHeader from './components/layouts/LayoutHeader.vue';
 </script>
@@ -14,6 +15,7 @@ import LayoutHeader from './components/layouts/LayoutHeader.vue';
       <footer>
          <LayoutFooter></LayoutFooter>
       </footer>
+      <ModalBase />
    </div>
 </template>
 
