@@ -8,7 +8,7 @@ const routes = require('./routes');
 const port = 3002;
 const app = express();
 
-app.use(express.static('../client/build'));
+app.use(express.static('../client/dist'));
 
 app.use(cookieParser());
 app.use(express.json());

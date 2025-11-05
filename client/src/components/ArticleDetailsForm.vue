@@ -7,20 +7,20 @@ const props = defineProps({
    article: { type: Object, reqired: true },
 });
 
-const emit = defineEmits(['onUpdateArticale', 'onReturn']);
+const emit = defineEmits(['onSaveArticale', 'onReturn']);
 
 // нужно создать копию данных статьи, чтобы редактировать её а не исходные данные в хранилище
 const editedArticle = ref({ ...props.article });
 
 const onSubmit = () => {
-   emit('onUpdateArticale', editedArticle.value);
+   emit('onSaveArticale', editedArticle.value);
 };
 </script>
 
 <template>
    <form @submit.prevent="onSubmit" class="bg-white rounded-md shadow-md p-8 mb-8">
       <div class="flex justify-between items-center mb-4">
-         <h1 class="text-3xl">Редактировать статью</h1>
+         <h1 class="text-3xl">Редактор статью</h1>
          <div class="flex gap-4 text-xl">
             <button type="submit" class="cursor-pointer hover:text-blue-400" aria-label="Сохранить статью">
                <FontAwesomeIcon :icon="faFloppyDisk" />

@@ -20,7 +20,7 @@ const router = createRouter({
       },
       {
          path: '/post',
-         name: 'posts',
+         name: 'new_post',
          component: () => import('../views/NewArticleView.vue'),
          meta: { requreAuth: true },
       },
@@ -28,6 +28,12 @@ const router = createRouter({
          path: '/post/:id',
          name: 'post',
          component: () => import('../views/ArticleView.vue'),
+         props: true,
+      },
+      {
+         path: '/:pathMatch(.*)*',
+         name: '404',
+         component: () => import('../views/NotFound.vue'),
          props: true,
       },
    ],

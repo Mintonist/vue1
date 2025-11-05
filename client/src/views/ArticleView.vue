@@ -26,8 +26,12 @@ console.log(article.value);
 
 const userStore = useUserStore();
 
-onBeforeMount(() => {
-   articleStore.fetchArticle(props.id);
+onBeforeMount(async () => {
+   try {
+      await articleStore.fetchArticle(props.id);
+   } catch {
+      router.push('/404');
+   }
 });
 
 const onRemoveArticale = () => {
@@ -66,7 +70,7 @@ const onUpdateArticale = (data) => {
       <ArticleDetailsForm
          v-else
          :article="article"
-         @onUpdateArticale="onUpdateArticale"
+         @onSaveArticale="onUpdateArticale"
          @onReturn="articleStore.toggleEditMode()"
       />
    </LayoutContainer>
