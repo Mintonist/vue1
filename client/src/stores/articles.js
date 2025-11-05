@@ -39,7 +39,34 @@ export const useArticlesStore = defineStore('articles', () => {
       }
    };
 
-   return { articles, currentPage, totalPage, fetchArticles };
+   const addArticle = async (item) => {
+      try {
+         const response = await fetch(`/api/post`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(item),
+         });
+         if (!response.ok) {
+            throw new Error('Article response error: ' + response.status);
+         }
+
+         const data = await response.json();
+         console.log(data);
+
+         if (!data.error && data.data) {
+            articles.value.push(data.data);
+         } else {
+            throw new Error('Article response error: ' + data);
+         }
+
+         return 0;
+      } catch (e) {
+         console.log(e);
+         throw e;
+      }
+   };
+
+   return { articles, currentPage, totalPage, fetchArticles, addArticle };
 });
 
 if (import.meta.hot) {

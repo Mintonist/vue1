@@ -1,7 +1,22 @@
 <script setup>
+import { useRoute } from 'vue-router';
 import ModalBase from './components/base/ModalBase.vue';
 import LayoutFooter from './components/layouts/LayoutFooter.vue';
 import LayoutHeader from './components/layouts/LayoutHeader.vue';
+import { useUserStore } from './stores/user';
+import { computed } from 'vue';
+import NotAuth from './views/NotAuth.vue';
+
+const route = useRoute();
+const userStore = useUserStore();
+
+const canAccess = computed(() => {
+   if (route.meta?.requireAdmin) {
+      return userStore.isAdmin;
+   }
+
+   return true;
+});
 </script>
 
 <template>
@@ -10,7 +25,8 @@ import LayoutHeader from './components/layouts/LayoutHeader.vue';
          <LayoutHeader></LayoutHeader>
       </header>
       <main class="flex-1 mt-26">
-         <router-view />
+         <RouterView v-if="canAccess" />
+         <NotAuth v-else />
       </main>
       <footer>
          <LayoutFooter></LayoutFooter>

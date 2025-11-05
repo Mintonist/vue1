@@ -37,7 +37,7 @@ const onSubmit = async (data) => {
 
 <template>
    <div class="py-8">
-      <h1 class="text-2xl text-center my-4">Регистрация</h1>
+      <h1 class="text-2xl text-center my-4">Войти</h1>
       <Form
          :validation-schema="schema"
          @submit="onSubmit"

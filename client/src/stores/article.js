@@ -29,6 +29,7 @@ export const useArticleStore = defineStore('article', () => {
          return 0;
       } catch (e) {
          console.log(e);
+         throw e;
       }
    };
 
