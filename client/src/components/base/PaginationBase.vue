@@ -1,14 +1,20 @@
-<script setup>
+<script setup lang="ts">
 const activeClass = 'underline hover:text-blue-500 cursor-pointer';
 const disableClass = 'text-gray-300 cursor-default';
 
-const props = defineProps({
-   currentPage: { type: Number, required: true },
-   totalPage: { type: Number, required: true },
-   onPageChanged: { type: Function, required: true },
-});
+// const props = defineProps({
+//    currentPage: { type: Number, required: true },
+//    totalPage: { type: Number, required: true },
+//    onPageChanged: { type: Function, required: true },
+// });
+interface IProps {
+   currentPage: number;
+   totalPage: number;
+   onPageChanged: (page: number) => void;
+}
+const props = defineProps<IProps>();
 
-const goToPage = (page) => {
+const goToPage = (page: number) => {
    props.onPageChanged(page);
 };
 </script>

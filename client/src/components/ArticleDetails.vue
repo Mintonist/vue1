@@ -1,14 +1,24 @@
-<script setup>
+<script setup lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faTrash, faPenToSquare, faCalendar } from '@fortawesome/free-solid-svg-icons';
 import { formatDate } from '@/utils/dateFormater';
 import { useUserStore } from '@/stores/user';
+import type { IArticle } from '@/types';
 
-defineProps({
-   article: { type: Object, reqired: true },
-});
+// const props = defineProps({
+//    article: { type: Object, reqired: true },
+// });
+interface IProps {
+   article: IArticle;
+}
 
-const emit = defineEmits(['onEditArticle', 'onRemoveArticale']);
+defineProps<IProps>();
+
+//const emit = defineEmits(['onEditArticle', 'onRemoveArticale']);
+const emit = defineEmits<{
+   onEditArticle: [];
+   onRemoveArticale: [];
+}>();
 
 const userStore = useUserStore();
 </script>

@@ -1,9 +1,9 @@
-<script setup>
+<script setup lang="ts">
 const props = defineProps({
-   type: { type: String, validtor: (value) => ['info', 'success', 'warning', 'error'].includes(value) },
+   type: { type: String, validtor: (value: string) => ['info', 'success', 'warning', 'error'].includes(value) },
 });
 
-const getClass = () => {
+const getClass = (): string => {
    switch (props.type) {
       case 'info':
          return 'text-blue-500';

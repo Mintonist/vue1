@@ -1,15 +1,16 @@
-<script setup>
+<script setup lang="ts">
 import LayoutContainer from '@/components/layouts/LayoutContainer.vue';
 
 import ArticleDetailsForm from '@/components/ArticleDetailsForm.vue';
 import { useRouter } from 'vue-router';
 import { useArticlesStore } from '@/stores/articles';
+import type { IArticle } from '@/types';
 
 const articlesStore = useArticlesStore();
 
 const router = useRouter();
 
-const onAddArticale = async (data) => {
+const onAddArticale = async (data: IArticle) => {
    await articlesStore.addArticle(data);
    router.push('/');
 };
@@ -18,7 +19,7 @@ const onAddArticale = async (data) => {
 <template>
    <LayoutContainer class="mt-4">
       <ArticleDetailsForm
-         :article="{ content: '', imageUrl: '', title: '' }"
+         :article="{ id: '', content: '', imageUrl: '', title: '', publishedAt: '', comments: [] }"
          @onSaveArticale="onAddArticale"
          @onReturn="router.push('/')"
       />

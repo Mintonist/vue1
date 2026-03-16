@@ -1,7 +1,8 @@
-<script setup>
+<script setup lang="ts">
 import MessageSpanBase from '@/components/base/MessageSpanBase.vue';
 import { useUserStore } from '@/stores/user';
-import { ErrorMessage, Field, Form } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/yup';
+import { ErrorMessage, Field, useForm } from 'vee-validate';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import * as yup from 'yup';
@@ -10,17 +11,19 @@ const labelClass = 'block text-gray-800';
 const errorClass = 'block text-red-800';
 
 const errorMessage = ref('');
-const paloMessage = ref('');
+//const paloMessage = ref('');
 const router = useRouter();
 
 const schema = yup.object({
    login: yup.string().required('Логин обязательный').min(3, 'Минимум 3 символа'),
    password: yup.string().required('Пароль обязательный').min(6, 'Минимум 6 символов'),
-   confirm: yup.string().oneOf([yup.ref('password'), null], 'Пароли не совпадают'),
+   confirm: yup.string().oneOf([yup.ref('password'), undefined], 'Пароли не совпадают'),
 });
 const userStore = useUserStore();
 
-const onSubmit = async (data) => {
+const { handleSubmit } = useForm({ validationSchema: toTypedSchema(schema) });
+
+const onSubmit = handleSubmit(async (data: { login: string; password: string }) => {
    errorMessage.value = '';
    console.log('onSubmit() data:', data);
    try {
@@ -34,45 +37,41 @@ const onSubmit = async (data) => {
    } catch (e) {
       errorMessage.value = 'Ошибка: ' + e;
    }
-};
+});
 
-const onSubmitPalo = async (data, e) => {
-   paloMessage.value = '';
-   console.log('onSubmitPalo() data:', data, e.evt.submitter.value);
-   const needPost = e.evt.submitter.value == 'post';
-   try {
-      const response = await fetch(
-         data.url + '/server/info',
-         needPost
-            ? {
-                 method: 'POST',
-                 headers: { 'Content-Type': 'application/json' },
-              }
-            : {
-                 method: 'GET',
-              },
-      );
-      if (!response.ok) {
-         throw new Error('User response error: ' + response.status);
-      }
+// const onSubmitPalo = async (data: any, e: any) => {
+//    paloMessage.value = '';
+//    console.log('onSubmitPalo() data:', data, e.evt.submitter.value);
+//    const needPost = e.evt.submitter.value == 'post';
+//    try {
+//       const response = await fetch(
+//          data.url + '/server/info',
+//          needPost
+//             ? {
+//                  method: 'POST',
+//                  headers: { 'Content-Type': 'application/json' },
+//               }
+//             : {
+//                  method: 'GET',
+//               },
+//       );
+//       if (!response.ok) {
+//          throw new Error('User response error: ' + response.status);
+//       }
 
-      const res = await response.text();
-      console.log('onSubmitPalo() response:', res);
-      paloMessage.value = res;
-   } catch (e) {
-      paloMessage.value = 'Ошибка: ' + e;
-   }
-};
+//       const res = await response.text();
+//       console.log('onSubmitPalo() response:', res);
+//       paloMessage.value = res;
+//    } catch (e) {
+//       paloMessage.value = 'Ошибка: ' + e;
+//    }
+// };
 </script>
 
 <template>
    <div class="py-8">
       <h1 class="text-2xl text-center my-4">Регистрация</h1>
-      <Form
-         :validation-schema="schema"
-         @submit="onSubmit"
-         class="bg-white rounded-md shadow-md w-full max-w-sm mx-auto p-6"
-      >
+      <form @submit.prevent="onSubmit" class="bg-white rounded-md shadow-md w-full max-w-sm mx-auto p-6">
          <div class="mb-4">
             <label for="login" :class="labelClass">Логин</label>
             <Field type="text" name="login" id="login" :class="inputClass" />
@@ -99,9 +98,9 @@ const onSubmitPalo = async (data, e) => {
             <RouterLink to="/login" class="text-blue-500 hover:underline">Войти</RouterLink>
          </p>
          <MessageSpanBase v-if="errorMessage" type="error">{{ errorMessage }}</MessageSpanBase>
-      </Form>
+      </form>
 
-      <Form @submit="onSubmitPalo" class="bg-white rounded-md shadow-md w-full max-w-sm mx-auto p-6 mt-12">
+      <!-- <Form @submit="onSubmitPalo" class="bg-white rounded-md shadow-md w-full max-w-sm mx-auto p-6 mt-12">
          <div class="mb-4">
             <label for="url" :class="labelClass">Palo url</label>
             <Field
@@ -129,6 +128,6 @@ const onSubmitPalo = async (data, e) => {
             Отправить POST запрос на PALO
          </button>
          <MessageSpanBase v-if="paloMessage" type="error">{{ paloMessage }}</MessageSpanBase>
-      </Form>
+      </Form> -->
    </div>
 </template>

@@ -1,20 +1,24 @@
-<script setup>
+<script setup lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 import { formatDate } from '@/utils/dateFormater';
 import { useUserStore } from '@/stores/user';
 import { useArticleStore } from '@/stores/article';
 import { useModalStore } from '@/stores/modal';
-
-defineProps({
-   data: { type: Array, reqired: true },
-});
+import type { IComment } from '@/types';
+// defineProps({
+//    data: { type: Array, reqired: true },
+// });
+interface IProps {
+   data: IComment[];
+}
+defineProps<IProps>();
 
 const userStore = useUserStore();
 const articleStore = useArticleStore();
 const modalStore = useModalStore();
 
-const onDeleteComment = (id) => {
+const onDeleteComment = (id: string) => {
    if (id)
       modalStore.open('Удаить комменатрий?', () => {
          articleStore.removeComment(id);
@@ -31,7 +35,7 @@ const onDeleteComment = (id) => {
                &nbsp; {{ item.author }}
             </p>
             <button
-               v-if="userStore.isAdmin | userStore.isModerator"
+               v-if="userStore.isAdmin || userStore.isModerator"
                @click="
                   () => {
                      onDeleteComment(item.id);

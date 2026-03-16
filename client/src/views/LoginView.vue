@@ -1,7 +1,8 @@
-<script setup>
+<script setup lang="ts">
 import MessageSpanBase from '@/components/base/MessageSpanBase.vue';
 import { useUserStore } from '@/stores/user';
-import { ErrorMessage, Field, Form } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/yup';
+import { ErrorMessage, Field, useForm } from 'vee-validate';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import * as yup from 'yup';
@@ -18,7 +19,9 @@ const schema = yup.object({
 });
 const userStore = useUserStore();
 
-const onSubmit = async (data) => {
+const { handleSubmit } = useForm({ validationSchema: toTypedSchema(schema) });
+
+const onSubmit = handleSubmit(async (data: { login: string; password: string }) => {
    errorMessage.value = '';
    console.log('onSubmit() data:', data);
    try {
@@ -32,17 +35,13 @@ const onSubmit = async (data) => {
    } catch (e) {
       errorMessage.value = 'Ошибка: ' + e;
    }
-};
+});
 </script>
 
 <template>
    <div class="py-8">
       <h1 class="text-2xl text-center my-4">Войти</h1>
-      <Form
-         :validation-schema="schema"
-         @submit="onSubmit"
-         class="bg-white rounded-md shadow-md w-full max-w-sm mx-auto p-6"
-      >
+      <form @submit.prevent="onSubmit" class="bg-white rounded-md shadow-md w-full max-w-sm mx-auto p-6">
          <div class="mb-4">
             <label for="login" :class="labelClass">Логин</label>
             <Field type="text" name="login" id="login" :class="inputClass" />
@@ -64,6 +63,6 @@ const onSubmit = async (data) => {
             <RouterLink to="/register" class="text-blue-500 hover:underline">Зарегистрироваться</RouterLink>
          </p>
          <MessageSpanBase v-if="errorMessage" type="error">{{ errorMessage }}</MessageSpanBase>
-      </Form>
+      </form>
    </div>
 </template>

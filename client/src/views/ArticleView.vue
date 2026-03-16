@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import LayoutContainer from '@/components/layouts/LayoutContainer.vue';
 import ArticleDetails from '@/components/ArticleDetails.vue';
 import CommentsList from '@/components/CommentsList.vue';
@@ -10,11 +10,16 @@ import ArticleDetailsForm from '@/components/ArticleDetailsForm.vue';
 import { useRouter } from 'vue-router';
 import { useModalStore } from '@/stores/modal';
 import { useUserStore } from '@/stores/user';
+import type { IArticle } from '@/types';
 
-const props = defineProps({
-   // придёт автоматически из роута, т.к. у маршрута стоит флаг props=true
-   id: { type: String, reqired: true },
-});
+// const props = defineProps({
+//    // придёт автоматически из роута, т.к. у маршрута стоит флаг props=true
+//    id: { type: String, reqired: true },
+// });
+interface IProps {
+   id: string; // придёт автоматически из роута, т.к. у маршрута стоит флаг props=true
+}
+const props = defineProps<IProps>();
 
 const articleStore = useArticleStore();
 const { article, isEditMode } = storeToRefs(articleStore);
@@ -44,7 +49,7 @@ const onConfirmRemove = async () => {
    await articleStore.removeArticle();
    router.push('/');
 };
-const onUpdateArticale = (data) => {
+const onUpdateArticale = (data: IArticle) => {
    articleStore.updateArticle(data);
    articleStore.toggleEditMode();
 };

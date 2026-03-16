@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import ArticleList from '@/components/ArticleList.vue';
 import LayoutContainer from '@/components/layouts/LayoutContainer.vue';
 import PaginationBase from '@/components/base/PaginationBase.vue';
@@ -7,10 +7,10 @@ import { useArticlesStore } from '@/stores/articles';
 
 const articlesStore = useArticlesStore();
 
-const doSearch = (searchQuery) => {
+const doSearch = (searchQuery: string) => {
    articlesStore.fetchArticles({ search: searchQuery });
 };
-const doPaginate = (page) => {
+const doPaginate = (page: number) => {
    articlesStore.fetchArticles({ page: page });
 };
 </script>
@@ -21,9 +21,9 @@ const doPaginate = (page) => {
       <ArticleList />
       <PaginationBase
          v-if="articlesStore.totalPage > 1"
-         :current-page="articlesStore.currentPage"
-         :total-page="articlesStore.totalPage"
-         :on-pageChanged="doPaginate"
+         :currentPage="articlesStore.currentPage"
+         :totalPage="articlesStore.totalPage"
+         :onPageChanged="doPaginate"
       />
    </LayoutContainer>
 </template>

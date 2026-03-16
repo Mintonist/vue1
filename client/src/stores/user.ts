@@ -2,10 +2,12 @@ import { computed, ref } from 'vue';
 import { acceptHMRUpdate, defineStore } from 'pinia';
 import ROLES from '@/constants/roles.js';
 
-const initUserData = {
+import type { IAPIResponse, IUser } from '@/types';
+
+const initUserData: IUser = {
    id: '',
    login: '',
-   roleId: null,
+   roleId: -1,
    registeredAt: '',
 };
 
@@ -18,7 +20,7 @@ export const useUserStore = defineStore('user', () => {
 
    const isModerator = computed(() => isAuth.value && user.value.roleId === ROLES.MODERATOR);
 
-   const register = async (login, password) => {
+   const register = async (login: string, password: string): Promise<IAPIResponse<IUser>> => {
       try {
          const response = await fetch('/api/register', {
             method: 'POST',
@@ -34,13 +36,14 @@ export const useUserStore = defineStore('user', () => {
 
          if (!data.error && data.user) user.value = data.user;
 
-         return data;
+         return { data: data.user };
       } catch (e) {
          console.log(e);
+         return { error: (e as Error)?.message };
       }
    };
 
-   const login = async (login, password) => {
+   const login = async (login: string, password: string): Promise<IAPIResponse<IUser>> => {
       try {
          const response = await fetch('/api/login', {
             method: 'POST',
@@ -56,13 +59,14 @@ export const useUserStore = defineStore('user', () => {
 
          if (!data.error && data.user) user.value = data.user;
 
-         return data;
+         return { data: data.user };
       } catch (e) {
          console.log(e);
+         return { error: (e as Error)?.message };
       }
    };
 
-   const logout = async () => {
+   const logout = async (): Promise<IAPIResponse<string>> => {
       try {
          const response = await fetch('/api/logout', {
             method: 'POST',
@@ -79,6 +83,7 @@ export const useUserStore = defineStore('user', () => {
          return data;
       } catch (e) {
          console.log(e);
+         return { error: (e as Error)?.message };
       }
    };
    return { user, isAuth, isAdmin, isModerator, register, login, logout };

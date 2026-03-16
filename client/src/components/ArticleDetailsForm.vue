@@ -1,16 +1,26 @@
-<script setup>
+<script setup lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faFloppyDisk, faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
 import { ref } from 'vue';
+import type { IArticle } from '@/types';
 
-const props = defineProps({
-   article: { type: Object, reqired: true },
-});
+// const props = defineProps({
+//    article: { type: Object, reqired: true },
+// });
+interface IProps {
+   article: IArticle;
+}
 
-const emit = defineEmits(['onSaveArticale', 'onReturn']);
+const props = defineProps<IProps>();
+
+//const emit = defineEmits(['onSaveArticale', 'onReturn']);
+const emit = defineEmits<{
+   onSaveArticale: [article: IArticle];
+   onReturn: [];
+}>();
 
 // нужно создать копию данных статьи, чтобы редактировать её а не исходные данные в хранилище
-const editedArticle = ref({ ...props.article });
+const editedArticle = ref<IArticle>({ ...props.article });
 
 const onSubmit = () => {
    emit('onSaveArticale', editedArticle.value);

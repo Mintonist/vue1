@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueDevTools from 'vite-plugin-vue-devtools';
 import tailwindcss from '@tailwindcss/vite';
+import checker from 'vite-plugin-checker';
 
 const serverUrl = 'http://localhost:3002';
 
@@ -15,7 +16,7 @@ export default defineConfig({
          '/api': { target: serverUrl, changeOrigin: true, rewrite: (path) => path },
       },
    },
-   plugins: [vue(), vueDevTools(), tailwindcss()],
+   plugins: [vue(), vueDevTools(), tailwindcss(), checker({ typescript: true })],
    resolve: {
       alias: {
          '@': fileURLToPath(new URL('./src', import.meta.url)),

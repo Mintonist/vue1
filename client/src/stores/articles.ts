@@ -1,13 +1,15 @@
 import { ref } from 'vue';
 import { acceptHMRUpdate, defineStore } from 'pinia';
 
+import type { IArticle, IAPIResponse } from '@/types';
+
 export const useArticlesStore = defineStore('articles', () => {
-   const articles = ref([]);
+   const articles = ref<IArticle[]>([]);
    const currentPage = ref(1);
    const totalPage = ref(1);
    const searchQuery = ref('');
 
-   const fetchArticles = async (args) => {
+   const fetchArticles = async (args?: { page?: number; search?: string }): Promise<IAPIResponse<IArticle[]>> => {
       try {
          const { page, search } = args || {};
          if (page) {
@@ -36,10 +38,11 @@ export const useArticlesStore = defineStore('articles', () => {
          return data;
       } catch (e) {
          console.log(e);
+         return { error: (e as Error)?.message };
       }
    };
 
-   const addArticle = async (item) => {
+   const addArticle = async (item: IArticle): Promise<IAPIResponse<IArticle>> => {
       try {
          const response = await fetch(`/api/post`, {
             method: 'POST',
@@ -59,10 +62,10 @@ export const useArticlesStore = defineStore('articles', () => {
             throw new Error('Article response error: ' + data);
          }
 
-         return 0;
+         return data;
       } catch (e) {
          console.log(e);
-         throw e;
+         return { error: (e as Error)?.message };
       }
    };
 

@@ -4,9 +4,9 @@ import { acceptHMRUpdate, defineStore } from 'pinia';
 export const useModalStore = defineStore('modal', () => {
    const message = ref('');
    const isVisible = ref(false);
-   let _callback = null;
+   let _callback: () => void;
 
-   const open = (msg, callback) => {
+   const open = (msg: string, callback: () => void) => {
       message.value = msg;
       _callback = callback;
       isVisible.value = true;

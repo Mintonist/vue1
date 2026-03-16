@@ -1,8 +1,10 @@
 import { ref } from 'vue';
 import { acceptHMRUpdate, defineStore } from 'pinia';
 
+import type { IArticle, IAPIResponse, IComment } from '@/types';
+
 export const useArticleStore = defineStore('article', () => {
-   const article = ref({});
+   const article = ref<IArticle>({ id: '', title: '', imageUrl: '', content: '', publishedAt: '', comments: [] });
 
    const isEditMode = ref(false);
 
@@ -10,7 +12,7 @@ export const useArticleStore = defineStore('article', () => {
       isEditMode.value = !isEditMode.value;
    };
 
-   const fetchArticle = async (id) => {
+   const fetchArticle = async (id: string): Promise<IAPIResponse<IArticle>> => {
       try {
          const response = await fetch(`/api/post/${id}`);
          if (!response.ok) {
@@ -26,14 +28,14 @@ export const useArticleStore = defineStore('article', () => {
             throw new Error('Article response error: ' + response.status);
          }
 
-         return 0;
+         return data;
       } catch (e) {
          console.log(e);
-         throw e;
+         return { error: (e as Error)?.message };
       }
    };
 
-   const updateArticle = async ({ title, content, imageUrl }) => {
+   const updateArticle = async ({ title, content, imageUrl }: IArticle): Promise<IAPIResponse<IArticle>> => {
       try {
          const response = await fetch(`/api/post/${article.value.id}`, {
             method: 'PATCH',
@@ -57,13 +59,14 @@ export const useArticleStore = defineStore('article', () => {
             throw new Error('Article response error: ' + response.status);
          }
 
-         return 0;
+         return data;
       } catch (e) {
          console.log(e);
+         return { error: (e as Error)?.message };
       }
    };
 
-   const addComment = async (txt) => {
+   const addComment = async (txt: string): Promise<IAPIResponse<IComment>> => {
       try {
          const response = await fetch(`/api/post/${article.value.id}/comments`, {
             method: 'POST',
@@ -85,14 +88,14 @@ export const useArticleStore = defineStore('article', () => {
             throw new Error('Article response error: ' + data);
          }
 
-         return 0;
+         return data;
       } catch (e) {
          console.log(e);
-         throw e;
+         return { error: (e as Error)?.message };
       }
    };
 
-   const removeComment = async (id) => {
+   const removeComment = async (id: string): Promise<IAPIResponse<string>> => {
       try {
          const response = await fetch(`/api/post/${article.value.id}/comments/${id}`, {
             method: 'DELETE',
@@ -111,14 +114,14 @@ export const useArticleStore = defineStore('article', () => {
             throw new Error('Article response error: ' + data);
          }
 
-         return 0;
+         return data;
       } catch (e) {
          console.log(e);
-         throw e;
+         return { error: (e as Error)?.message };
       }
    };
 
-   const removeArticle = async () => {
+   const removeArticle = async (): Promise<IAPIResponse<string>> => {
       try {
          const response = await fetch(`/api/post/${article.value.id}`, {
             method: 'DELETE',
@@ -133,6 +136,7 @@ export const useArticleStore = defineStore('article', () => {
          return data;
       } catch (e) {
          console.log(e);
+         return { error: (e as Error)?.message };
       }
    };
 

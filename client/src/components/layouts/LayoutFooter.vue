@@ -1,17 +1,18 @@
-<script setup>
+<script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
 import LayoutContainer from './LayoutContainer.vue';
+import type { IYandexWeatherApiResponse } from '@/types';
 
-const year = new Date().toLocaleString('ru-RU', { year: 'numeric' });
-const city = ref('');
-const temp = ref(0);
-const osadki = ref(0);
+const year: string = new Date().toLocaleString('ru-RU', { year: 'numeric' });
+const city = ref<string>('');
+const temp = ref<number>(0);
+const osadki = ref<number>(0);
 
-const lat = 50.13434;
-const lon = 50.13434;
+const lat: number = 50.13434;
+const lon: number = 50.13434;
 
 onBeforeMount(() => {
-   const accessKey = import.meta.env.VITE_APP_YANDEX_WEATHER_KEY;
+   const accessKey: string = import.meta.env.VITE_APP_YANDEX_WEATHER_KEY;
    console.log(accessKey, import.meta.env);
    const headers = {
       'X-Yandex-Weather-Key': accessKey,
@@ -19,7 +20,7 @@ onBeforeMount(() => {
 
    fetch(`https://api.weather.yandex.ru/v2/forecast?lat=${lat}&lon=${lon}`, { headers })
       .then((response) => response.json())
-      .then((json) => {
+      .then((json: IYandexWeatherApiResponse) => {
          console.log(json);
          city.value = json.geo_object.locality.name;
          temp.value = json.fact.temp;

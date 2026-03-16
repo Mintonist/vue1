@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { useArticleStore } from '@/stores/article';
 import { ref } from 'vue';
 
@@ -10,9 +10,10 @@ const onSubmit = async () => {
    try {
       await articleStore.addComment(comment.value);
       comment.value = '';
-   } catch (err) {
-      console.log('error', err);
-      errorMsg.value = err.message;
+   } catch (error) {
+      console.log('error', error);
+      const err = error as Error;
+      errorMsg.value = err?.message;
    }
 };
 </script>

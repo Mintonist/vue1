@@ -1,22 +1,26 @@
-<script setup>
+<script setup lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { ref, watch } from 'vue';
 
 const searchQuery = ref('');
 
-const props = defineProps({
-   onSearch: { type: Function, required: true },
-});
+// const props = defineProps({
+//    onSearch: { type: Function, required: true },
+// });
+interface IProps {
+   onSearch: (query: string) => void;
+}
+const props = defineProps<IProps>();
 
-let t = 0;
+let t: ReturnType<typeof setTimeout> | undefined;
 
 const onSubmit = () => {
    clearTimeout(t);
    if (searchQuery.value?.trim().length >= 0) props.onSearch(searchQuery.value.trim());
 };
 
-const debouncedSearch = (query) => {
+const debouncedSearch = (query: string) => {
    clearTimeout(t);
    t = setTimeout(() => {
       props.onSearch(query);

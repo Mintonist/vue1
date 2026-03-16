@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { useRoute } from 'vue-router';
 import ModalBase from './components/base/ModalBase.vue';
 import LayoutFooter from './components/layouts/LayoutFooter.vue';

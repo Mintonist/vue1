@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import LayoutContainer from '@/components/layouts/LayoutContainer.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faFloppyDisk, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -10,7 +10,7 @@ import { Field, Form } from 'vee-validate';
 
 const usersStore = useUsersStore();
 const errorMessage = ref('');
-const userMessage = ref({});
+const userMessage = ref<Record<string, { msg?: string; type?: string }>>({});
 let t = 0;
 
 onBeforeMount(async () => {
@@ -19,11 +19,11 @@ onBeforeMount(async () => {
    if (res.error) {
       errorMessage.value = res.error;
    } else {
-      usersStore.users = res.data;
+      usersStore.users = res.data ? res.data : [];
    }
 });
 
-const onPressRemoveUser = async (id) => {
+const onPressRemoveUser = async (id: string) => {
    userMessage.value[id] = {};
    clearTimeout(t);
    const res = await usersStore.removeUser(id);
@@ -42,7 +42,7 @@ const onPressRemoveUser = async (id) => {
    }, 2000);
 };
 
-const submitRoleChange = async (userId, newRoleId) => {
+const submitRoleChange = async (userId: string, newRoleId: number) => {
    userMessage.value[userId] = {};
    clearTimeout(t);
    console.log('submitRoleChange', userId, newRoleId);
@@ -111,10 +111,10 @@ const submitRoleChange = async (userId, newRoleId) => {
                            <FontAwesomeIcon :icon="faFloppyDisk" />
                         </button>
                         <MessageSpanBase
-                           v-if="userMessage[item.id]?.msg?.length > 0"
-                           :type="userMessage[item.id].type"
+                           v-if="userMessage[item.id]?.msg != ''"
+                           :type="userMessage[item.id]?.type"
                            class="absolute left-full ml-2"
-                           >{{ userMessage[item.id].msg }}
+                           >{{ userMessage[item.id]?.msg }}
                         </MessageSpanBase>
                      </Form>
                   </td>

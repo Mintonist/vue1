@@ -1,10 +1,11 @@
 import { ref } from 'vue';
 import { acceptHMRUpdate, defineStore } from 'pinia';
+import type { IAPIResponse, IUser } from '@/types';
 
 export const useUsersStore = defineStore('users', () => {
-   const users = ref([]);
+   const users = ref<IUser[]>([]);
 
-   const fetchUsers = async () => {
+   const fetchUsers = async (): Promise<IAPIResponse<IUser[]>> => {
       try {
          const response = await fetch(`/api/users`);
          if (!response.ok) {
@@ -19,10 +20,11 @@ export const useUsersStore = defineStore('users', () => {
          return data;
       } catch (e) {
          console.log(e);
+         return { error: (e as Error)?.message };
       }
    };
 
-   const removeUser = async (id) => {
+   const removeUser = async (id: string): Promise<IAPIResponse<string>> => {
       try {
          const response = await fetch(`/api/users/${id}`, { method: 'DELETE' });
          if (!response.ok) {
@@ -39,10 +41,11 @@ export const useUsersStore = defineStore('users', () => {
          return data;
       } catch (e) {
          console.log(e);
+         return { error: (e as Error)?.message };
       }
    };
 
-   const changeUser = async (userId, roleId) => {
+   const changeUser = async (userId: string, roleId: number): Promise<IAPIResponse<IUser>> => {
       try {
          const response = await fetch(`/api/users/${userId}`, {
             method: 'PATCH',
@@ -67,6 +70,7 @@ export const useUsersStore = defineStore('users', () => {
          return data;
       } catch (e) {
          console.log(e);
+         return { error: (e as Error)?.message };
       }
    };
 

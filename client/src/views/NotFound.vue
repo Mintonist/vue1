@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import LayoutContainer from '@/components/layouts/LayoutContainer.vue';
 </script>
 
